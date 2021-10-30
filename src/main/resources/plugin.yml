@@ -1,0 +1,9 @@
+name: Template
+version: '${project.version}'
+main: me.majeek.template.Template
+api-version: 1.17
+authors: [ Majeek ]
+description: Base system for Spigot plugins
+commands:
+  template:
+    description: Main Template command

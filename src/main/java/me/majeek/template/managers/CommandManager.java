@@ -12,11 +12,12 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class CommandManager implements CommandExecutor {
-    private final String COMMAND_NAME = "template";
+    private final String COMMAND_NAME = "tos";
     private final List<SubCommand> SUB_COMMANDS = new ArrayList<>();
 
     public void register() {
@@ -36,7 +37,7 @@ public class CommandManager implements CommandExecutor {
 
         if(args.length == 0) {
             for(SubCommand subCommand : this.SUB_COMMANDS) {
-                if(subCommand.getName().equalsIgnoreCase("help")) {
+                if(Arrays.equals(Arrays.copyOfRange(new String[]{"help"}, 0, subCommand.getName().length), subCommand.getName())) {
                     if(isPlayer || subCommand.allowConsole()) {
                         if(sender.hasPermission(subCommand.getPermission())) {
                             subCommand.execute(sender, args);
@@ -62,12 +63,21 @@ public class CommandManager implements CommandExecutor {
             }
         } else {
             for(SubCommand subCommand : this.SUB_COMMANDS) {
-                if(subCommand.getName().equalsIgnoreCase(args[0])) {
+                if(Arrays.equals(Arrays.copyOfRange(args, 0, subCommand.getName().length), subCommand.getName())) {
                     if(isPlayer || subCommand.allowConsole()) {
                         if(sender.hasPermission(subCommand.getPermission())) {
-                            subCommand.execute(sender, args);
+                            if(args.length - subCommand.getName().length >= subCommand.requiredArgs()){
+                                subCommand.execute(sender, Arrays.copyOfRange(args, subCommand.getName().length, args.length));
 
-                            return true;
+                                return true;
+                            } else {
+                                String prefix = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("prefix"));
+                                String content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("error.no-arguments"));
+
+                                sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + content));
+
+                                return false;
+                            }
                         } else {
                             String prefix = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("prefix"));
                             String content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("error.no-permission"));
@@ -86,6 +96,13 @@ public class CommandManager implements CommandExecutor {
                     }
                 }
             }
+
+            String prefix = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("prefix"));
+            String content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("error.invalid-command"));
+
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + content));
+
+            return false;
         }
 
         return false;

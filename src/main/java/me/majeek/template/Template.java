@@ -18,16 +18,16 @@ public final class Template extends JavaPlugin {
         INSTANCE = this;
 
         // Create Configs
-        this.messagesConfig = new MessagesConfig("messages.yml");
+        this.messagesConfig = new MessagesConfig("./", "messages", ".yml");
 
         // Save Configs
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
-        messagesConfig.setup();
-        messagesConfig.setDefaults();
-        messagesConfig.getConfig().options().copyDefaults(true);
-        messagesConfig.saveConfig();
+        this.messagesConfig.setup();
+        this.messagesConfig.setDefaults();
+        this.messagesConfig.getConfig().options().copyDefaults(true);
+        this.messagesConfig.saveConfig();
 
         // Create Managers
         this.commandManager = new CommandManager();

@@ -10,8 +10,8 @@ import java.util.Objects;
 
 public class HelpCommand implements SubCommand {
     @Override
-    public @NotNull String getName() {
-        return "help";
+    public @NotNull String[] getName() {
+        return new String[]{ "help" };
     }
 
     @Override
@@ -25,10 +25,18 @@ public class HelpCommand implements SubCommand {
     }
 
     @Override
-    public void execute(CommandSender player, String[] args) {
-        Map<String, Object> content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getConfigurationSection("help")).getValues(false);
+    public int requiredArgs() {
+        return 0;
+    }
 
-        for(Object item : content.values())
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) item));
+    @Override
+    public void execute(CommandSender player, String[] args) {
+        Map<String, Object> content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getConfigurationSection("help")).getValues(true);
+
+        for(Object item : content.values()){
+            if(item instanceof String) {
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', (String) item));
+            }
+        }
     }
 }

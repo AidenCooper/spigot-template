@@ -9,8 +9,8 @@ import java.util.Objects;
 
 public class ReloadCommand implements SubCommand {
     @Override
-    public @NotNull String getName() {
-        return "reload";
+    public @NotNull String[] getName() {
+        return new String[]{ "reload" };
     }
 
     @Override
@@ -24,12 +24,17 @@ public class ReloadCommand implements SubCommand {
     }
 
     @Override
+    public int requiredArgs() {
+        return 0;
+    }
+
+    @Override
     public void execute(CommandSender player, String[] args) {
         Template.getInstance().reloadConfig();
         Template.getInstance().getMessagesConfig().reloadConfig();
 
         String prefix = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("prefix"));
-        String content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("reload.reload"));
+        String content = Objects.requireNonNull(Template.getInstance().getMessagesConfig().getConfig().getString("reload.reloaded"));
 
         player.sendMessage(ChatColor.translateAlternateColorCodes('&', prefix + content));
     }
